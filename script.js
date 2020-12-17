@@ -15,7 +15,7 @@ window.addEventListener("load", function() {
       let fuelStatusChange = document.getElementById("fuelStatus");
       let cargoStatusChange = document.getElementById("cargoStatus");
 
-      if (typeof pilotNameInput !== "string" || typeof copilotNameInput !== "string" || typeof fuelLevelInput !== "number" || typeof cargoMassInput !== "number" ){
+      if (typeof pilotNameInput.value !== "string" || typeof copilotNameInput.value !== "string" || typeof fuelLevelInput.value !== "number" || typeof cargoMassInput.value !== "number" ){
          alert("Please make sure to use valid data types!");
          // stop the form submission
          event.preventDefault();
