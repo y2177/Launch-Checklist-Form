@@ -1,13 +1,73 @@
 // Write your JavaScript code here!
 
-/* This block of code shows how to format the HTML once you fetch some planetary JSON!
-<h2>Mission Destination</h2>
-<ol>
-   <li>Name: ${}</li>
-   <li>Diameter: ${}</li>
-   <li>Star: ${}</li>
-   <li>Distance from Earth: ${}</li>
-   <li>Number of Moons: ${}</li>
-</ol>
-<img src="${}">
-*/
+window.addEventListener("load", function() {
+   // put DOM code here to ensure elements have been loaded
+   console.log('window loaded');
+
+   let form = document.querySelector("form");
+   form.addEventListener("submit", function(event) {
+
+      let pilotNameInput = document.querySelector("input[name=pilotName]");
+      let copilotNameInput = document.querySelector("input[name=copilotName]");
+      let fuelLevelInput = document.querySelector("input[name=fuelLevel]");
+      let cargoMassInput = document.querySelector("input[name=cargoMass]");
+      let launchStatusChange = document.getElementById("launchStatus");
+      let fuelStatusChange = document.getElementById("fuelStatus");
+      let cargoStatusChange = document.getElementById("cargoStatus");
+
+      if (typeof pilotNameInput !== "string" || typeof copilotNameInput !== "string" || typeof fuelLevelInput !== "number" || typeof cargoMassInput !== "number" ){
+         alert("Please make sure to use valid data types!");
+         // stop the form submission
+         event.preventDefault();
+      }
+      else if (pilotNameInput.value === "" || copilotNameInput.value === "" || fuelLevelInput.value === "" || cargoMassInput.value === "" ){
+         alert("Please fill all fields!");
+         //Stop the form submission
+         event.preventDefault();
+      }
+      else if (fuelLevelInput < 10000){
+         //document.styleSheets[0].cssRules[2].style.visibility = "visible";
+         document.getElementById("faultyItems").style.visibility = "visible";
+         document.getElementById("pilotStatus").innerText = `Pilot ${pilotNameInput} Ready`;
+         document.getElementById("copilotStatus").innerText = `CoPilot ${copilotNameInput} Ready`;
+         fuelStatusChange.innerText = "There is not enough fuel for this journey.";
+         launchStatusChange.innerText = "Shuttle not ready for launch.";
+         launchStatusChange.style.color = "red";
+      }
+      else if (cargoMassInput > 10000){
+         document.getElementById("faultyItems").style.visibility = "visible";
+         document.getElementById("pilotStatus").innerText = `Pilot ${pilotNameInput} Ready`;
+         document.getElementById("copilotStatus").innerText = `CoPilot ${copilotNameInput} Ready`;
+         cargoStatusChange.innerText = "There is not enough fuel for this journey.";
+         launchStatusChange.innerText = "Shuttle not ready for launch.";
+         launchStatusChange.style.color = "red";
+      }
+      else{
+         launchStatusChange.style.color = "green";
+         launchStatusChange.innerText = "Shuttle is ready for launch.";
+         const fetchPromise = fetch("https://handlers.education.launchcode.org/static/planets.json");
+         fetchPromise.then(function(response){
+             const jsonPromise = response.json();
+             jsonPromise.then(function(json){
+                 const div = document.getElementById("missionTarget");  
+                         div.innerHTML +=    
+                        `
+                        <h2>Mission Destination</h2>
+                        <ol>
+                           <li>Name: ${json[5].name}</li>
+                           <li>Diameter: ${json[5].diameter}</li>
+                           <li>Star: ${json[5].star}</li>
+                           <li>Distance from Earth: ${json[5].distance}</li>
+                           <li>Number of Moons: ${json[5].moons}</li>
+                        </ol>
+                        <img src="${json[5].image}">
+                        `
+            })
+         });
+      };
+   });
+});
+
+
+
+
