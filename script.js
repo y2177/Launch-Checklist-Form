@@ -7,6 +7,7 @@ window.addEventListener("load", function() {
    let form = document.querySelector("form");
    form.addEventListener("submit", function(event) {
 
+      const fetchPromise = fetch("https://handlers.education.launchcode.org/static/planets.json");
       let pilotNameInput = document.querySelector("input[name=pilotName]");
       let copilotNameInput = document.querySelector("input[name=copilotName]");
       let fuelLevelInput = document.querySelector("input[name=fuelLevel]");
@@ -16,15 +17,16 @@ window.addEventListener("load", function() {
       let cargoStatusChange = document.getElementById("cargoStatus");
 
       if (typeof pilotNameInput.value !== "string" || typeof copilotNameInput.value !== "string" || typeof fuelLevelInput.value !== "number" || typeof cargoMassInput.value !== "number" ){
-         alert("Please make sure to use valid data types!");
+         //alert("Please make sure to use valid data types!");
          // stop the form submission
-         event.preventDefault();
+         //event.preventDefault();
       }
       else if (pilotNameInput.value === "" || copilotNameInput.value === "" || fuelLevelInput.value === "" || cargoMassInput.value === "" ){
-         alert("Please fill all fields!");
+         //alert("Please fill all fields!");
          //Stop the form submission
-         event.preventDefault();
+         //event.preventDefault();
       }
+      
       else if (fuelLevelInput < 10000){
          //document.styleSheets[0].cssRules[2].style.visibility = "visible";
          document.getElementById("faultyItems").style.visibility = "visible";
@@ -33,6 +35,7 @@ window.addEventListener("load", function() {
          fuelStatusChange.innerText = "There is not enough fuel for this journey.";
          launchStatusChange.innerText = "Shuttle not ready for launch.";
          launchStatusChange.style.color = "red";
+         event.preventDefault();
       }
       else if (cargoMassInput > 10000){
          document.getElementById("faultyItems").style.visibility = "visible";
@@ -41,28 +44,27 @@ window.addEventListener("load", function() {
          cargoStatusChange.innerText = "There is not enough fuel for this journey.";
          launchStatusChange.innerText = "Shuttle not ready for launch.";
          launchStatusChange.style.color = "red";
+         event.preventDefault();
       }
       else{
+         event.preventDefault();
          launchStatusChange.style.color = "green";
          launchStatusChange.innerText = "Shuttle is ready for launch.";
-         const fetchPromise = fetch("https://handlers.education.launchcode.org/static/planets.json");
          fetchPromise.then(function(response){
-             const jsonPromise = response.json();
-             jsonPromise.then(function(json){
-                 const div = document.getElementById("missionTarget");  
-                         div.innerHTML +=    
-                        `
-                        <h2>Mission Destination</h2>
-                        <ol>
-                           <li>Name: ${json[5].name}</li>
-                           <li>Diameter: ${json[5].diameter}</li>
-                           <li>Star: ${json[5].star}</li>
-                           <li>Distance from Earth: ${json[5].distance}</li>
-                           <li>Number of Moons: ${json[5].moons}</li>
-                        </ol>
-                        <img src="${json[5].image}">
-                        `
-            })
+             response.json().then(function(json){
+               const div = document.getElementById("missionTarget");  
+               div.innerHTML += `
+               <h2>Mission Destination</h2>
+               <ol>
+                  <li>Name: ${json[5].name}</li>
+                  <li>Diameter: ${json[5].diameter}</li>
+                  <li>Star: ${json[5].star}</li>
+                  <li>Distance from Earth: ${json[5].distance}</li>
+                  <li>Number of Moons: ${json[5].moons}</li>
+               </ol>
+               <img src="${json[5].image}">
+               `
+            });
          });
       };
    });
